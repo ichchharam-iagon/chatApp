@@ -115,7 +115,7 @@ function decrypt(encryptedMessage) {
     const encryptedValues = encryptedMessage.split(' ');
     for (let i = 0; i < encryptedValues.length; i++) {
         let decr = parseFloat(encryptedValues[i]);
-        let decrChar = decr / 3.14;
+        let decredChar = decr / 3.14;
         let value = Math.pow(base, decredChar);
         decryptedMessage += String.fromCharCode(Math.round(value));
     }
