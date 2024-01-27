@@ -93,35 +93,34 @@
         sidebar.style.display =
           sidebar.style.display === 'none' ? 'block' : 'none';
       });
-      
 
-  function encrypt(message) {
-    let encryptedMessage = '';
-    let base = 2;
-    for (let i = 0; i < message.length; i++) {
-        let value = message.charCodeAt(i);
-        const newValue = value * base
-        let encryptedChar = Math.log2(value);
-        let newEnc = encryptedChar * 3.14
-        encryptedMessage += newEnc + ' ';
-    }
+      function encrypt(message) {
+        let encryptedMessage = '';
+        let base = 2;
+        for (let i = 0; i < message.length; i++) {
+          let value = message.charCodeAt(i);
+          const newValue = value * 2;
+          let encryptedChar = Math.log2(value);
+          let newEnc = encryptedChar * 3.14;
+          let root = Math.cbrt(newEnc);
+          encryptedMessage += root + ' ';
+        }
+        return encryptedMessage.trim();
+      }
 
-    return encryptedMessage.trim();
-}
-
-function decrypt(encryptedMessage) {
-    let decryptedMessage = '';
-  let base = 2;
-    const encryptedValues = encryptedMessage.split(' ');
-    for (let i = 0; i < encryptedValues.length; i++) {
-        let decr = parseFloat(encryptedValues[i]);
-        let decredChar = decr / 3.14;
-        let value = Math.pow(base, decredChar);
-        decryptedMessage += String.fromCharCode(Math.round(value));
-    }
-
-    return decryptedMessage;
-}
+      function decrypt(encryptedMessage) {
+        let decryptedMessage = '';
+        let base = 2;
+        const encryptedValues = encryptedMessage.split(' ');
+        for (let i = 0; i < encryptedValues.length; i++) {
+          let encryptedChar = parseFloat(encryptedValues[i]);
+          let newEnc = Math.pow(encryptedChar, 3);
+          let encryptedValue = newEnc / 3.14;
+          let decryptedChar = Math.pow(2, encryptedValue);
+          decryptedMessage += String.fromCharCode(Math.round(decryptedChar));
+        }
+        return decryptedMessage;
+      }
 
       $(document).ready(function () {
         $('.user-list').click(function () {
@@ -129,7 +128,7 @@ function decrypt(encryptedMessage) {
           recieverId = userId;
           $('.start-head').hide();
           $('.chat-section').show();
-          
+
           socket.emit('chatHistory', {
             senderId: senderId,
             recieverId: recieverId,
@@ -157,11 +156,11 @@ function decrypt(encryptedMessage) {
               let html =
                 `
                 <div class="my-chat"><h5>` +
-               decrypt(chat) +
+                decrypt(chat) +
                 `</h5></div>
                 `;
               $('#chat-container').append(html);
-             
+
               socket.emit('chat', response.data);
               scrollChat();
             } else {
@@ -171,16 +170,14 @@ function decrypt(encryptedMessage) {
         });
       });
 
-    
       socket.on('loadNewChat', function (data) {
-               
         var decryptedMessage = decrypt(data.message);
 
         if (senderId == data.recieverId && recieverId == data.senderId) {
           let html =
             `
             <div class="his-chat"><h5>` +
-              decryptedMessage +
+            decryptedMessage +
             `</h5></div>
                 `;
           $('#chat-container').append(html);
@@ -196,18 +193,17 @@ function decrypt(encryptedMessage) {
           let addClass = '';
           if (chatHistory[i]['senderId'] == senderId) {
             html +=
-            `<div class='my-chat` +
-            `'><h5>` +
-            decrypt(chatHistory[i]['message']) +
-            `</h5></div>`;
+              `<div class='my-chat` +
+              `'><h5>` +
+              decrypt(chatHistory[i]['message']) +
+              `</h5></div>`;
           } else {
             html +=
-            `<div class='his-chat` +
-            `'><h5>` +
-            decrypt(chatHistory[i]['message']) +
-            `</h5></div>`;
+              `<div class='his-chat` +
+              `'><h5>` +
+              decrypt(chatHistory[i]['message']) +
+              `</h5></div>`;
           }
-          
         }
         $('#chat-container').append(html);
         scrollChat();
