@@ -48,6 +48,6 @@ userNameSpace.on('connection', function (socket) {
     socket.emit('loadChatHistory', { chats: chat });
   });
 });
-http.listen(3000, function () {
+http.listen(3000,'0.0.0.0', function () {
   console.log('Api is running');
 });
